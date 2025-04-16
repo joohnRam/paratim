@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mensaje Espacial</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            perspective: 1000px;
+        }
+        
+        .space {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: #fff;
+            border-radius: 50%;
+            animation: twinkle var(--duration) infinite ease-in-out;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+        
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+        
+        .message-container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            max-width: 80%;
+        }
+        
+        .message {
+            font-size: 3rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 10px #ff3366, 0 0 20px #ff3366, 0 0 30px #ff3366;
+            animation: float 6s infinite ease-in-out;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        
+        .submessage {
+            font-size: 1.5rem;
+            opacity: 0;
+            animation: fadeIn 2s forwards 2s;
+            color: #aaa;
+        }
+        
+        .comet {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,0) 100%);
+            border-radius: 50%;
+            filter: blur(1px);
+            z-index: 2;
+            opacity: 0;
+        }
+        
+        @keyframes float {
+            0% { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            20% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            80% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 0.7; }
+        }
+        
+        @keyframes cometFly {
+            0% {
+                transform: translate(0, 0);
+                opacity: 0;
+                width: 4px;
+            }
+            10% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty));
+                opacity: 0;
+                width: 200px;
+            }
+        }
+        
+        .heart {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff3366;
+            transform: rotate(45deg);
+            opacity: 0;
+            animation: heartBreak 3s forwards;
+        }
+        
+        .heart:before, .heart:after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #ff3366;
+            border-radius: 50%;
+        }
+        
+        .heart:before {
+            top: -10px;
+            left: 0;
+        }
+        
+        .heart:after {
+            top: 0;
+            left: -10px;
+        }
+        
+        @keyframes heartBreak {
+            0% {
+                transform: rotate(45deg) scale(1);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                transform: rotate(45deg) scale(1.3);
+                opacity: 1;
+            }
+            100% {
+                transform: rotate(45deg) scale(0.5);
+                opacity: 0;
+                filter: blur(2px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="space" id="space"></div>
+    
+    <div class="message-container">
+        <div class="message" id="message">Ella no te ama</div>
+        <div class="submessage">Pero el universo es infinito y hay millones de estrellas esperando brillar para ti</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Crear estrellas de fondo
+            const space = document.getElementById('space');
+            for (let i = 0; i < 200; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (2 + Math.random() * 3) + 's');
+                star.style.animationDelay = Math.random() * 5 + 's';
+                space.appendChild(star);
+            }
+            
+            // Crear planetas
+            for (let i = 0; i < 3; i++) {
+                const planet = document.createElement('div');
+                planet.className = 'planet';
+                const size = 50 + Math.random() * 150;
+                planet.style.width = size + 'px';
+                planet.style.height = size + 'px';
+                planet.style.left = Math.random() * 100 + '%';
+                planet.style.top = Math.random() * 100 + '%';
+                
+                // Gradiente aleatorio para planetas
+                const colors = [
+                    'linear-gradient(135deg, #ff9966, #ff5e62)',
+                    'linear-gradient(135deg, #4e54c8, #8f94fb)',
+                    'linear-gradient(135deg, #11998e, #38ef7d)',
+                    'linear-gradient(135deg, #a8ff78, #78ffd6)',
+                    'linear-gradient(135deg, #f46b45, #eea849)'
+                ];
+                planet.style.background = colors[Math.floor(Math.random() * colors.length)];
+                
+                space.appendChild(planet);
+            }
+            
+            // Animación del mensaje
+            const message = document.getElementById('message');
+            setTimeout(() => {
+                message.style.animation = 'float 6s infinite ease-in-out';
+                
+                // Crear corazones que se rompen
+                setInterval(createBreakingHeart, 1000);
+                
+                // Crear cometas
+                setInterval(createComet, 800);
+            }, 500);
+            
+            function createBreakingHeart() {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+                heart.style.left = Math.random() * window.innerWidth + 'px';
+                heart.style.top = Math.random() * window.innerHeight + 'px';
+                heart.style.setProperty('--delay', Math.random() * 2 + 's');
+                document.body.appendChild(heart);
+                
+                setTimeout(() => {
+                    heart.remove();
+                }, 3000);
+            }
+            
+            function createComet() {
+                const comet = document.createElement('div');
+                comet.className = 'comet';
+                
+                // Posición inicial aleatoria en los bordes
+                let startX, startY;
+                if (Math.random() > 0.5) {
+                    startX = Math.random() > 0.5 ? 0 : window.innerWidth;
+                    startY = Math.random() * window.innerHeight;
+                } else {
+                    startX = Math.random() * window.innerWidth;
+                    startY = Math.random() > 0.5 ? 0 : window.innerHeight;
+                }
+                
+                // Posición final aleatoria
+                const endX = Math.random() * window.innerWidth;
+                const endY = Math.random() * window.innerHeight;
+                
+                comet.style.left = startX + 'px';
+                comet.style.top = startY + 'px';
+                comet.style.setProperty('--tx', (endX - startX) + 'px');
+                comet.style.setProperty('--ty', (endY - startY) + 'px');
+                comet.style.animation = 'cometFly 2s linear forwards';
+                
+                document.body.appendChild(comet);
+                
+                setTimeout(() => {
+                    comet.remove();
+                }, 2000);
+            }
+            
+            // Efecto de movimiento parallax para el espacio
+            document.addEventListener('mousemove', (e) => {
+                const x = e.clientX / window.innerWidth;
+                const y = e.clientY / window.innerHeight;
+                
+                space.style.transform = `translate(${x * 20 - 10}px, ${y * 20 - 10}px)`;
+            });
+        });
+    </script>
+</body>
+</html>
